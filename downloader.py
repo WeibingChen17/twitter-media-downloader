@@ -8,7 +8,7 @@ import random
 import os.path
 import urllib.request
 
-target = sys.argv[1]
+target = "https://twitter.com/" + sys.argv[1]
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
