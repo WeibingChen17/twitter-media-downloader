@@ -9,7 +9,7 @@ This is a python script for you to download the media in a given twitter account
 * Easy to use. 
 
 ## Usage
-` downloader.py <account_name>
+` python3 TwitterDownloader.py <account_name>
 
 ## Installation
 
@@ -17,9 +17,20 @@ This is a python script for you to download the media in a given twitter account
 
 `pip3 install -r requirement`
 
-### Install Chrome driver
+### Install Chrome & Chromedriver
 
-[todo]
+Chrome is needed by Chromedriver. In mac, you can install Chromedriver by `brew`:
+```
+brew cask install chromedriver
+```
+
+In Linux, you can use `apt` or `yum`:
+```
+apt instal chromedriver
+```
 
 ## Requirement
 Only support python3. Let python2 gone in the wind.
+
+## Todo
+1. Bug: UrlNotExistException never thrown

@@ -3,6 +3,7 @@ import os, sys, time
 import random
 import os.path
 import urllib.request
+from distutils.spawn import find_executable
 from lxml import etree
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -10,7 +11,12 @@ from selenium.webdriver.chrome.options import Options
 TWITTER = "https://twitter.com/" 
 
 class UrlNotExistException(Exception):
-    pass
+    def __init__(self):
+        super("Url not accessible")
+
+class ChromedriverNotExistException(Exception):
+    def __init__(self):
+        super('Chromedriver could not be found')
 
 class TwitterDownloader:
     def __init__(self, targetURL):
@@ -23,10 +29,13 @@ class TwitterDownloader:
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('window-size=1200x600')
         chrome_options.add_argument('--disable-images')
-        self.driver = webdriver.Chrome('/usr/bin/chromedriver', options=chrome_options)
+        ChromedriverPath = find_executable('chromedriver')
+        if len(ChromedriverPath) == 0:
+            raise ChromedriverNotExistException();
+        self.driver = webdriver.Chrome(ChromedriverPath, options=chrome_options)
 
     def run(self):
-        self.driver.get(target)
+        self.driver.get(self.targetURL)
         sel = etree.HTML(self.driver.page_source)
 
         imageList = sel.xpath('//img[starts-with(@src, "https://pbs.twimg.com/media")]/@src')
@@ -35,10 +44,10 @@ class TwitterDownloader:
         maxTry, iTry = 3, 0
         while iTry < maxTry:
             print('Scrolling down ...', end='')
-            driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
+            self.driver.execute_script('window.scrollTo(0, document.body.scrollHeight);')
             print('Wait ...')
             time.sleep(5)
-            sel = etree.HTML(driver.page_source)
+            sel = etree.HTML(self.driver.page_source)
             imageList = sel.xpath('//img[starts-with(@src, "https://pbs.twimg.com/media")]/@src')
             if len(imageList) > prevLength:
                 prevLength = len(imageList)
@@ -72,12 +81,13 @@ class TwitterDownloader:
         
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        raise Exception("Wrong argument number")
+        print("Wrong number of arguments.")
+        sys.exit(1)
     targetURL = TWITTER + sys.argv[1]
     try:
         td = TwitterDownloader(targetURL)
         td.run()
     except UrlNotExistException as e:
-        pass
+        print(e)
     except Exception as e:
-        pass
+        print(e)
