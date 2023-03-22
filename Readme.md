@@ -26,7 +26,7 @@ brew cask install chromedriver
 
 In Linux, you can use `apt` or `yum`:
 ```
-apt instal chromedriver
+apt install chromedriver
 ```
 
 ## Requirement
